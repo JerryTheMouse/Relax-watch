@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Relax &amp; watch</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="movies_api_base_url">http://api.themoviedb.org</string>
+    <string name="movies_api_images_url">http://image.tmdb.org/t/p/w185</string>
+    <string name="title_activity_details">Movie Details</string>
+
+
+    <string name="pref_sort_key">pref_sort</string>
+    <string name="pref_sort_title">Sort by</string>
+    <string-array name="pref_sort_entries">
+        <item>Most popular</item>
+        <item>Highest rated</item>
+    </string-array>
+
+    <string-array name="pref_sort_entry_values">
+        <item>popularity.desc</item>
+        <item>vote_average.desc</item>
+    </string-array>
+    <string name="pref_sort_default">vote_average.desc</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>
