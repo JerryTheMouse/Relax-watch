@@ -17,20 +17,27 @@ import org.jerrycode.relaxwatch.Models.Movie;
  * A simple {@link Fragment} subclass.
  * create an instance of this fragment.
  */
-public class DetailFragment extends Fragment {
+public class MovieDetailFragment extends Fragment {
+    public static final String MOVIE_ARG_ID = "MOVIE_ARGUMENT";
     private Movie movie;
     private ImageView moviePosterIV;
     private TextView movieOriginalTitleTV, movieOverviewTV, movieRateTV;
 
 
-    public DetailFragment() {
+    public MovieDetailFragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        movie = getActivity().getIntent().getExtras().getParcelable("MOVIE");
+
+        // If there are arguments and MOVIE_ARG_ID, this is two pane mode
+        if (getArguments()!= null && getArguments().containsKey(MOVIE_ARG_ID))
+            movie = getArguments().getParcelable(MOVIE_ARG_ID);
+        else
+            movie = getActivity().getIntent().getExtras().getParcelable("MOVIE");
+
         moviePosterIV = (ImageView) getView().findViewById(R.id.movie_poster_imageview);
         movieOriginalTitleTV = (TextView) getView().findViewById(R.id.movie_title_tv);
         movieOverviewTV = (TextView) getView().findViewById(R.id.movie_overview_tv);

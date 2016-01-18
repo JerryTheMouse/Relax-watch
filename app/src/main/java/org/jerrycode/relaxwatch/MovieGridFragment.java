@@ -1,7 +1,6 @@
 package org.jerrycode.relaxwatch;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -28,14 +27,19 @@ import retrofit.Retrofit;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MovieGridFragment extends Fragment {
 
-    private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+    private static final String LOG_TAG = MovieGridFragment.class.getSimpleName();
     private Context _context;
     private MovieAdapter _mAdapter;
     private GridView _mGrid;
+    private Callbacks mCallbacks;
 
-    public MainActivityFragment() {
+    public MovieGridFragment() {
+    }
+
+    public interface Callbacks {
+        public void onItemSelected(Movie _movie);
     }
 
     @Override
@@ -47,16 +51,30 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (!(context instanceof Callbacks)) {
+            throw new IllegalStateException(
+                    "Activity must implement fragment's callbacks.");
+        }
+
+        mCallbacks = (Callbacks) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         RelaxAndWatchApplication.getInstance().getBus().unregister(this);
 
     }
 
-    @Subscribe
-    public void presencesChanged(PreferenceChangedEvent event) {
-        loadMovies(event.getSortPreference());
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,10 +90,8 @@ public class MainActivityFragment extends Fragment {
         _mGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(_context, DetailsActivity.class);
-                i.putExtra("MOVIE", _mAdapter.getItem(position));
+                mCallbacks.onItemSelected(_mAdapter.getItem(position));
 
-                startActivity(i);
             }
         });
         _mAdapter = new MovieAdapter(_context, android.R.layout.simple_list_item_1);
@@ -113,5 +129,11 @@ public class MainActivityFragment extends Fragment {
         });
     }
 
+
+
+    @Subscribe
+    public void preferencesChanged(PreferenceChangedEvent event) {
+        loadMovies(event.getSortPreference());
+    }
 
 }
