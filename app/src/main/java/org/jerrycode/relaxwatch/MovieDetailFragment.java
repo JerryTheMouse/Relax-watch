@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -46,6 +47,8 @@ public class MovieDetailFragment extends Fragment {
     private ListView mReviewListView;
     private ArrayAdapter<Review> mReviewAdapter;
 
+    private Button mToggleFavouriteButton;
+
     public MovieDetailFragment() {
         // Required empty public constructor
     }
@@ -54,20 +57,11 @@ public class MovieDetailFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mReviewAdapter = new ArrayAdapter<Review>(getActivity(), android.R.layout.simple_list_item_1);
-        mReviewListView = (ListView) getView().findViewById(R.id.reviews_lv);
-        mReviewListView.setAdapter(mReviewAdapter);
+        initailizeReviewAdapter();
 
-        mTrailerAdapter = new TrailerAdapter(getActivity(), android.R.layout.simple_list_item_1);
-        mTrailerListView = (ListView) getView().findViewById(R.id.trailers_lv);
-        mTrailerListView.setAdapter(mTrailerAdapter);
-        mTrailerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(Intent.ACTION_VIEW, mTrailerAdapter.getItem(position).getUri());
-                startActivity(i);
-            }
-        });
+        initalizeTrailerAdapter();
+
+
         // If there are arguments and MOVIE_ARG_ID, this is two pane mode
         if (getArguments() != null && getArguments().containsKey(MOVIE_ARG_ID))
             mMovie = getArguments().getParcelable(MOVIE_ARG_ID);
@@ -86,9 +80,29 @@ public class MovieDetailFragment extends Fragment {
         mMovieOriginalTitleTV.setText(mMovie.getOriginal_title());
         mMovieOverviewTV.setText("Overview : " + mMovie.getOverview());
         mMovieRateTV.setText("Rate :" + String.valueOf(mMovie.getVote_average()));
-
+        initializeToggleButton();
         loadTrailers();// I have to load Trailers after getting mMovie object
         loadReviews();
+
+    }
+
+    private void initalizeTrailerAdapter() {
+        mTrailerAdapter = new TrailerAdapter(getActivity(), android.R.layout.simple_list_item_1);
+        mTrailerListView = (ListView) getView().findViewById(R.id.trailers_lv);
+        mTrailerListView.setAdapter(mTrailerAdapter);
+        mTrailerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(Intent.ACTION_VIEW, mTrailerAdapter.getItem(position).getUri());
+                startActivity(i);
+            }
+        });
+    }
+
+    private void initailizeReviewAdapter() {
+        mReviewAdapter = new ArrayAdapter<Review>(getActivity(), android.R.layout.simple_list_item_1);
+        mReviewListView = (ListView) getView().findViewById(R.id.reviews_lv);
+        mReviewListView.setAdapter(mReviewAdapter);
     }
 
     @Override
@@ -155,5 +169,25 @@ public class MovieDetailFragment extends Fragment {
         });
     }
 
+    private void initializeToggleButton() {
+        final FavouriteMoviesManager FMM = FavouriteMoviesManager.getInstance(getActivity());
+
+        mToggleFavouriteButton = (Button) getView().findViewById(R.id.toggle_fav_button);
+        mToggleFavouriteButton.setText(getString(FMM.hasMovie(mMovie) ? R.string.fav_button_state_marked : R.string.fav_button_state_unmarked));
+
+        mToggleFavouriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (FMM.hasMovie(mMovie))
+                    FMM.removeMovie(mMovie);
+                else
+                    FMM.addMovie(mMovie);
+
+                mToggleFavouriteButton.setText(getString(FMM.hasMovie(mMovie) ? R.string.fav_button_state_marked : R.string.fav_button_state_unmarked));
+
+            }
+        });
+    }
 
 }

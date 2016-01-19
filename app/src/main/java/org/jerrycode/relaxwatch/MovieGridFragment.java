@@ -20,6 +20,8 @@ import org.jerrycode.relaxwatch.Events.PreferenceChangedEvent;
 import org.jerrycode.relaxwatch.Models.Movie;
 import org.jerrycode.relaxwatch.Models.MovieAPIResponse;
 
+import java.util.ArrayList;
+
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
@@ -105,30 +107,47 @@ public class MovieGridFragment extends Fragment {
         // Getting SortBy query
         if (sortBy == null)
             sortBy = PreferenceManager.getDefaultSharedPreferences(_context).getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
-        RelaxAndWatchApplication.getInstance().getMoviesAPIService().listMovies(sortBy).enqueue(new Callback<MovieAPIResponse<Movie>>() {
-            @Override
-            public void onResponse(Response<MovieAPIResponse<Movie>> response, Retrofit retrofit) {
-                _mAdapter.clear();
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    _mAdapter.addAll(response.body().getResults());
-                } else {
-                    for (Movie m : response.body().getResults()) {
-                        _mAdapter.add(m);
-                    }
+        if (sortBy == getString(R.string.pref_sort_favourite_value)) {
+            _mAdapter.clear();
+
+            ArrayList<Movie> movies = FavouriteMoviesManager.getInstance(_context).getMovies();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                _mAdapter.addAll(movies);
+            } else {
+                for (Movie m : movies) {
+                    _mAdapter.add(m);
                 }
-                _mAdapter.notifyDataSetChanged();
             }
+            _mAdapter.notifyDataSetChanged();
 
-            @Override
-            public void onFailure(Throwable t) {
-                t.printStackTrace();
 
-                Toast.makeText(_context, "Can't Connect to the webserver", Toast.LENGTH_SHORT).show();
-            }
-        });
+        } else {
+            RelaxAndWatchApplication.getInstance().getMoviesAPIService().listMovies(sortBy).enqueue(new Callback<MovieAPIResponse<Movie>>() {
+                @Override
+                public void onResponse(Response<MovieAPIResponse<Movie>> response, Retrofit retrofit) {
+                    _mAdapter.clear();
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                        _mAdapter.addAll(response.body().getResults());
+                    } else {
+                        for (Movie m : response.body().getResults()) {
+                            _mAdapter.add(m);
+                        }
+                    }
+                    _mAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    t.printStackTrace();
+
+                    Toast.makeText(_context, "Can't Connect to the webserver", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
-
 
 
     @Subscribe

@@ -12,21 +12,20 @@
     <string-array name="pref_sort_entries">
         <item>Most popular</item>
         <item>Highest rated</item>
+        <item>Favourite</item>
     </string-array>
 
     <string-array name="pref_sort_entry_values">
         <item>popularity.desc</item>
         <item>vote_average.desc</item>
+        <item>@string/pref_sort_favourite_value</item>
     </string-array>
+    <string name="pref_sort_favourite_value">favourite</string>
+
     <string name="pref_sort_default">vote_average.desc</string>
 
-    <!-- Strings related to Settings -->
 
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="fav_button_state_marked">Un-mark as favourite</string>
+    <string name="fav_button_state_unmarked">Mark as favourite</string>
 
 </resources>

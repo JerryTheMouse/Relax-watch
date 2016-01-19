@@ -65,4 +65,20 @@ public class Movie implements Parcelable {
         dest.writeString(overview);
         dest.writeFloat(vote_average);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Movie movie = (Movie) o;
+
+        return id == movie.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
 }
