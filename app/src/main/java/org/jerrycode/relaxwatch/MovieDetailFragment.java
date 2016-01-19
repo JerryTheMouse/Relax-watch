@@ -13,11 +13,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.gson.JsonElement;
 import com.squareup.picasso.Picasso;
 
 import org.jerrycode.relaxwatch.Adapters.TrailerAdapter;
 import org.jerrycode.relaxwatch.Models.Movie;
+import org.jerrycode.relaxwatch.Models.MovieAPIResponse;
 import org.jerrycode.relaxwatch.Models.Review;
 import org.jerrycode.relaxwatch.Models.Trailer;
 
@@ -106,11 +106,11 @@ public class MovieDetailFragment extends Fragment {
 
     private void loadTrailers() {
 
-        RelaxAndWatchApplication.getInstance().getMoviesAPIService().getTrailers(mMovie.getId()).enqueue(new Callback<JsonElement>() {
+        RelaxAndWatchApplication.getInstance().getMoviesAPIService().getTrailers(mMovie.getId()).enqueue(new Callback<MovieAPIResponse<Trailer>>() {
             @Override
-            public void onResponse(Response<JsonElement> response, Retrofit retrofit) {
+            public void onResponse(Response<MovieAPIResponse<Trailer>> response, Retrofit retrofit) {
                 mTrailerAdapter.clear();
-                ArrayList<Trailer> trailers = Utility.buildTrailersUriFromJsonArray(response.body().getAsJsonObject().getAsJsonArray("results"));
+                ArrayList<Trailer> trailers = response.body().getResults();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                     mTrailerAdapter.addAll(trailers);
                 } else {
@@ -130,11 +130,11 @@ public class MovieDetailFragment extends Fragment {
 
     private void loadReviews() {
 
-        RelaxAndWatchApplication.getInstance().getMoviesAPIService().getReviews(mMovie.getId()).enqueue(new Callback<JsonElement>() {
+        RelaxAndWatchApplication.getInstance().getMoviesAPIService().getReviews(mMovie.getId()).enqueue(new Callback<MovieAPIResponse<Review>>() {
             @Override
-            public void onResponse(Response<JsonElement> response, Retrofit retrofit) {
+            public void onResponse(Response<MovieAPIResponse<Review>> response, Retrofit retrofit) {
                 mReviewAdapter.clear();
-                ArrayList<Review> reviews = Utility.buildReviewsFromJsonArray(response.body().getAsJsonObject().getAsJsonArray("results"));
+                ArrayList<Review> reviews = response.body().getResults();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                     mReviewAdapter.addAll(reviews);
                 } else {

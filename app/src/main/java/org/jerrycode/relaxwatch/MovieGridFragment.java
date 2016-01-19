@@ -105,9 +105,9 @@ public class MovieGridFragment extends Fragment {
         // Getting SortBy query
         if (sortBy == null)
             sortBy = PreferenceManager.getDefaultSharedPreferences(_context).getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
-        RelaxAndWatchApplication.getInstance().getMoviesAPIService().listMovies(sortBy).enqueue(new Callback<MovieAPIResponse>() {
+        RelaxAndWatchApplication.getInstance().getMoviesAPIService().listMovies(sortBy).enqueue(new Callback<MovieAPIResponse<Movie>>() {
             @Override
-            public void onResponse(Response<MovieAPIResponse> response, Retrofit retrofit) {
+            public void onResponse(Response<MovieAPIResponse<Movie>> response, Retrofit retrofit) {
                 _mAdapter.clear();
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
