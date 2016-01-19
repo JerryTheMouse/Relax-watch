@@ -2,14 +2,13 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    tools:context=".MovieDetailsActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-
-        tools:context=".MovieDetailsActivity">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/movie_title_tv"
@@ -37,9 +36,23 @@
             android:layout_marginTop="5dp" />
 
         <ListView
+
             android:id="@+id/trailers_lv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:divider="#000000"
+            android:dividerHeight="1dp" />
+
+        <ListView
+            android:id="@+id/reviews_lv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="#000000"
+
+            android:dividerHeight="1dp"
+            android:listSelector="@android:color/transparent" />
     </LinearLayout>
 
 </ScrollView>

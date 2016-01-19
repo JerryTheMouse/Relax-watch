@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.squareup.picasso.Picasso;
 
 import org.jerrycode.relaxwatch.Adapters.TrailerAdapter;
 import org.jerrycode.relaxwatch.Models.Movie;
+import org.jerrycode.relaxwatch.Models.Review;
 import org.jerrycode.relaxwatch.Models.Trailer;
 
 import java.util.ArrayList;
@@ -40,6 +42,10 @@ public class MovieDetailFragment extends Fragment {
     private TrailerAdapter mTrailerAdapter;
     private ListView mTrailerListView;
 
+
+    private ListView mReviewListView;
+    private ArrayAdapter<Review> mReviewAdapter;
+
     public MovieDetailFragment() {
         // Required empty public constructor
     }
@@ -47,6 +53,10 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mReviewAdapter = new ArrayAdapter<Review>(getActivity(), android.R.layout.simple_list_item_1);
+        mReviewListView = (ListView) getView().findViewById(R.id.reviews_lv);
+        mReviewListView.setAdapter(mReviewAdapter);
 
         mTrailerAdapter = new TrailerAdapter(getActivity(), android.R.layout.simple_list_item_1);
         mTrailerListView = (ListView) getView().findViewById(R.id.trailers_lv);
@@ -78,7 +88,7 @@ public class MovieDetailFragment extends Fragment {
         mMovieRateTV.setText("Rate :" + String.valueOf(mMovie.getVote_average()));
 
         loadTrailers();// I have to load Trailers after getting mMovie object
-
+        loadReviews();
     }
 
     @Override
@@ -109,6 +119,33 @@ public class MovieDetailFragment extends Fragment {
                     }
                 }
                 mTrailerAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
+    }
+
+    private void loadReviews() {
+
+        RelaxAndWatchApplication.getInstance().getMoviesAPIService().getReviews(mMovie.getId()).enqueue(new Callback<JsonElement>() {
+            @Override
+            public void onResponse(Response<JsonElement> response, Retrofit retrofit) {
+                mReviewAdapter.clear();
+                ArrayList<Review> reviews = Utility.buildReviewsFromJsonArray(response.body().getAsJsonObject().getAsJsonArray("results"));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    mReviewAdapter.addAll(reviews);
+                } else {
+                    for (Review t : reviews) {
+                        mReviewAdapter.add(t);
+                    }
+                }
+                mReviewAdapter.notifyDataSetChanged();
+
+                Utility.setListViewHeightBasedOnChildren(mReviewListView);
+
             }
 
             @Override

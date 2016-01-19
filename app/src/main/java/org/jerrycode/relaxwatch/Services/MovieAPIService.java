@@ -20,4 +20,7 @@ public interface MovieAPIService {
 
     @GET("/3/movie/{id}/videos")
     Call<JsonElement> getTrailers(@Path("id") int id);
+
+    @GET("/3/movie/{id}/reviews")
+    Call<JsonElement> getReviews(@Path("id") int id);
 }
