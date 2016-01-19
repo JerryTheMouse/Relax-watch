@@ -1,16 +1,29 @@
 package org.jerrycode.relaxwatch;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.JsonElement;
 import com.squareup.picasso.Picasso;
 
+import org.jerrycode.relaxwatch.Adapters.TrailerAdapter;
 import org.jerrycode.relaxwatch.Models.Movie;
+import org.jerrycode.relaxwatch.Models.Trailer;
+
+import java.util.ArrayList;
+
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 
 /**
@@ -19,10 +32,13 @@ import org.jerrycode.relaxwatch.Models.Movie;
  */
 public class MovieDetailFragment extends Fragment {
     public static final String MOVIE_ARG_ID = "MOVIE_ARGUMENT";
-    private Movie movie;
-    private ImageView moviePosterIV;
-    private TextView movieOriginalTitleTV, movieOverviewTV, movieRateTV;
+    private Movie mMovie;
+    private ImageView mMoviePosterIV;
+    private TextView mMovieOriginalTitleTV, mMovieOverviewTV, mMovieRateTV;
 
+
+    private TrailerAdapter mTrailerAdapter;
+    private ListView mTrailerListView;
 
     public MovieDetailFragment() {
         // Required empty public constructor
@@ -32,29 +48,42 @@ public class MovieDetailFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mTrailerAdapter = new TrailerAdapter(getActivity(), android.R.layout.simple_list_item_1);
+        mTrailerListView = (ListView) getView().findViewById(R.id.trailers_lv);
+        mTrailerListView.setAdapter(mTrailerAdapter);
+        mTrailerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(Intent.ACTION_VIEW, mTrailerAdapter.getItem(position).getUri());
+                startActivity(i);
+            }
+        });
         // If there are arguments and MOVIE_ARG_ID, this is two pane mode
-        if (getArguments()!= null && getArguments().containsKey(MOVIE_ARG_ID))
-            movie = getArguments().getParcelable(MOVIE_ARG_ID);
+        if (getArguments() != null && getArguments().containsKey(MOVIE_ARG_ID))
+            mMovie = getArguments().getParcelable(MOVIE_ARG_ID);
         else
-            movie = getActivity().getIntent().getExtras().getParcelable("MOVIE");
+            mMovie = getActivity().getIntent().getExtras().getParcelable("MOVIE");
 
-        moviePosterIV = (ImageView) getView().findViewById(R.id.movie_poster_imageview);
-        movieOriginalTitleTV = (TextView) getView().findViewById(R.id.movie_title_tv);
-        movieOverviewTV = (TextView) getView().findViewById(R.id.movie_overview_tv);
-        movieRateTV = (TextView) getView().findViewById(R.id.movie_rate_tv);
 
-        String url = getString(R.string.movies_api_images_url) + movie.getPoster_path();
-        Picasso.with(getActivity()).load(url).into(moviePosterIV);
+        mMoviePosterIV = (ImageView) getView().findViewById(R.id.movie_poster_imageview);
+        mMovieOriginalTitleTV = (TextView) getView().findViewById(R.id.movie_title_tv);
+        mMovieOverviewTV = (TextView) getView().findViewById(R.id.movie_overview_tv);
+        mMovieRateTV = (TextView) getView().findViewById(R.id.movie_rate_tv);
 
-        movieOriginalTitleTV.setText(movie.getOriginal_title());
-        movieOverviewTV.setText("Overview : " + movie.getOverview());
-        movieRateTV.setText("Rate :" + String.valueOf(movie.getVote_average()));
+        String url = getString(R.string.movies_api_images_url) + mMovie.getPoster_path();
+        Picasso.with(getActivity()).load(url).into(mMoviePosterIV);
+
+        mMovieOriginalTitleTV.setText(mMovie.getOriginal_title());
+        mMovieOverviewTV.setText("Overview : " + mMovie.getOverview());
+        mMovieRateTV.setText("Rate :" + String.valueOf(mMovie.getVote_average()));
+
+        loadTrailers();// I have to load Trailers after getting mMovie object
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
     }
 
@@ -63,6 +92,30 @@ public class MovieDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_detail, container, false);
+    }
+
+    private void loadTrailers() {
+
+        RelaxAndWatchApplication.getInstance().getMoviesAPIService().getTrailers(mMovie.getId()).enqueue(new Callback<JsonElement>() {
+            @Override
+            public void onResponse(Response<JsonElement> response, Retrofit retrofit) {
+                mTrailerAdapter.clear();
+                ArrayList<Trailer> trailers = Utility.buildTrailersUriFromJsonArray(response.body().getAsJsonObject().getAsJsonArray("results"));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    mTrailerAdapter.addAll(trailers);
+                } else {
+                    for (Trailer t : trailers) {
+                        mTrailerAdapter.add(t);
+                    }
+                }
+                mTrailerAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
     }
 
 

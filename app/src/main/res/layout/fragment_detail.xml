@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="wrap_content">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
 
-        tools:context=".MovieDetailsActivity"
-        >
+        tools:context=".MovieDetailsActivity">
 
         <TextView
             android:id="@+id/movie_title_tv"
@@ -17,24 +18,28 @@
 
         <ImageView
             android:id="@+id/movie_poster_imageview"
-            android:adjustViewBounds="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
             android:contentDescription="Movie Poster" />
 
         <TextView
-            android:layout_marginTop="5dp"
             android:id="@+id/movie_overview_tv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
 
         <TextView
-            android:layout_marginTop="5dp"
-
             android:id="@+id/movie_rate_tv"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+
+        <ListView
+            android:id="@+id/trailers_lv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
     </LinearLayout>
 
 </ScrollView>
