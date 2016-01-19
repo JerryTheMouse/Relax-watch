@@ -107,8 +107,7 @@ public class MovieGridFragment extends Fragment {
         // Getting SortBy query
         if (sortBy == null)
             sortBy = PreferenceManager.getDefaultSharedPreferences(_context).getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_default));
-
-        if (sortBy == getString(R.string.pref_sort_favourite_value)) {
+        if (getString(R.string.pref_sort_favourite_value).equals(sortBy)) {
             _mAdapter.clear();
 
             ArrayList<Movie> movies = FavouriteMoviesManager.getInstance(_context).getMovies();

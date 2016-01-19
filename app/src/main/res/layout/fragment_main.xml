@@ -7,7 +7,7 @@
 
   <GridView
       android:id="@+id/images_grid"
-      android:numColumns="3"
+      android:numColumns="@integer/grid_columns"
       android:verticalSpacing="0dp"
       android:horizontalSpacing="0dp"
 

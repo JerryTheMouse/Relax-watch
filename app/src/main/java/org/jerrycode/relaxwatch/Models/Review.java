@@ -12,6 +12,10 @@ public class Review {
         this.content = content;
     }
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public String getAuthor() {
         return author;
     }

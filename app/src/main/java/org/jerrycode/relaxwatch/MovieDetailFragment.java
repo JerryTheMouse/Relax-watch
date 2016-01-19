@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.thedeanda.lorem.LoremIpsum;
 
 import org.jerrycode.relaxwatch.Adapters.TrailerAdapter;
 import org.jerrycode.relaxwatch.Models.Movie;
@@ -56,7 +57,6 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         initailizeReviewAdapter();
 
         initalizeTrailerAdapter();
@@ -133,6 +133,8 @@ public class MovieDetailFragment extends Fragment {
                     }
                 }
                 mTrailerAdapter.notifyDataSetChanged();
+                Utility.setListViewHeightBasedOnChildren(mTrailerListView);
+
             }
 
             @Override
@@ -149,10 +151,9 @@ public class MovieDetailFragment extends Fragment {
             public void onResponse(Response<MovieAPIResponse<Review>> response, Retrofit retrofit) {
                 mReviewAdapter.clear();
                 ArrayList<Review> reviews = response.body().getResults();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    mReviewAdapter.addAll(reviews);
-                } else {
+           {
                     for (Review t : reviews) {
+                        t.setContent(LoremIpsum.getInstance().getWords(100,200));
                         mReviewAdapter.add(t);
                     }
                 }
