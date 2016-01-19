@@ -13,18 +13,24 @@ import retrofit.Retrofit;
  * Created by jerry on 12/18/15.
  */
 public class RelaxAndWatchApplication extends android.app.Application {
+    private static RelaxAndWatchApplication _app;
     private Retrofit _retrofit;
-    private MovieAPIService apiService;
+    private MovieAPIService _apiService;
     private OkHttpClient _client;
     private Bus bus = new Bus();
 
-    private static RelaxAndWatchApplication _mApp;
+    public static RelaxAndWatchApplication getInstance() {
+        return _app;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        _mApp = this;
+        _app = this;
     }
+
+
+
 
     public MovieAPIService getMoviesAPIService() {
         if (_client == null) {
@@ -34,14 +40,11 @@ public class RelaxAndWatchApplication extends android.app.Application {
                     .baseUrl(getString(R.string.movies_api_base_url)).build();
 
 
-            apiService = _retrofit.create(MovieAPIService.class);
+            _apiService = _retrofit.create(MovieAPIService.class);
+
 
         }
-        return apiService;
-    }
-
-    public static RelaxAndWatchApplication getInstance() {
-        return _mApp;
+        return _apiService;
     }
 
     public Bus getBus() {
