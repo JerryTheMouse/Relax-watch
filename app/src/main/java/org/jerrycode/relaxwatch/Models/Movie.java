@@ -7,19 +7,6 @@ import android.os.Parcelable;
  * Created by jerry on 12/18/15.
  */
 public class Movie implements Parcelable {
-    int id;
-    String poster_path, original_title, overview;
-    float vote_average;
-
-
-    public Movie(Parcel in) {
-        id = in.readInt();
-        poster_path = in.readString();
-        original_title = in.readString();
-        overview = in.readString();
-        vote_average = in.readFloat();
-    }
-
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
         @Override
         public Movie createFromParcel(Parcel in) {
@@ -31,6 +18,26 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+    int id;
+    String poster_path;
+    String original_title;
+    String overview;
+    String release_date;
+    float vote_average;
+
+
+    public Movie(Parcel in) {
+        id = in.readInt();
+        poster_path = in.readString();
+        original_title = in.readString();
+        overview = in.readString();
+        release_date = in.readString();
+        vote_average = in.readFloat();
+    }
+
+    public String getRelease_date() {
+        return release_date;
+    }
 
     public float getVote_average() {
         return vote_average;
@@ -63,6 +70,7 @@ public class Movie implements Parcelable {
         dest.writeString(poster_path);
         dest.writeString(original_title);
         dest.writeString(overview);
+        dest.writeString(release_date);
         dest.writeFloat(vote_average);
     }
 

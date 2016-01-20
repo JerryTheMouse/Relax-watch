@@ -27,5 +27,7 @@
 
     <string name="fav_button_state_marked">Un-mark as favourite</string>
     <string name="fav_button_state_unmarked">Mark as favourite</string>
+    <string name="reviews_header">Reviews :</string>
+    <string name="trailers_header">Trailers :</string>
 
 </resources>

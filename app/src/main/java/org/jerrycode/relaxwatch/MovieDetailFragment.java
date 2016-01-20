@@ -38,7 +38,7 @@ public class MovieDetailFragment extends Fragment {
     public static final String MOVIE_ARG_ID = "MOVIE_ARGUMENT";
     private Movie mMovie;
     private ImageView mMoviePosterIV;
-    private TextView mMovieOriginalTitleTV, mMovieOverviewTV, mMovieRateTV;
+    private TextView mMovieOriginalTitleTV, mMovieOverviewTV, mMovieRateTV, mMovieReleaseDateTV;
 
 
     private TrailerAdapter mTrailerAdapter;
@@ -73,13 +73,15 @@ public class MovieDetailFragment extends Fragment {
         mMovieOriginalTitleTV = (TextView) getView().findViewById(R.id.movie_title_tv);
         mMovieOverviewTV = (TextView) getView().findViewById(R.id.movie_overview_tv);
         mMovieRateTV = (TextView) getView().findViewById(R.id.movie_rate_tv);
+        mMovieReleaseDateTV = (TextView) getView().findViewById(R.id.movie_release_date_tv);
 
         String url = getString(R.string.movies_api_images_url) + mMovie.getPoster_path();
         Picasso.with(getActivity()).load(url).into(mMoviePosterIV);
 
         mMovieOriginalTitleTV.setText(mMovie.getOriginal_title());
-        mMovieOverviewTV.setText("Overview : " + mMovie.getOverview());
-        mMovieRateTV.setText("Rate :" + String.valueOf(mMovie.getVote_average()));
+        mMovieOverviewTV.setText(mMovie.getOverview());
+        mMovieRateTV.setText(String.valueOf(mMovie.getVote_average()) + "/10");
+        mMovieReleaseDateTV.setText(mMovie.getRelease_date());
         initializeToggleButton();
         loadTrailers();// I have to load Trailers after getting mMovie object
         loadReviews();
@@ -151,9 +153,9 @@ public class MovieDetailFragment extends Fragment {
             public void onResponse(Response<MovieAPIResponse<Review>> response, Retrofit retrofit) {
                 mReviewAdapter.clear();
                 ArrayList<Review> reviews = response.body().getResults();
-           {
+                {
                     for (Review t : reviews) {
-                        t.setContent(LoremIpsum.getInstance().getWords(100,200));
+                        t.setContent(LoremIpsum.getInstance().getWords(100, 200));
                         mReviewAdapter.add(t);
                     }
                 }
